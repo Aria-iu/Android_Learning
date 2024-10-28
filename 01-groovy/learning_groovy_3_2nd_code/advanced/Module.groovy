@@ -1,0 +1,4 @@
+/*
+    Extension modules in Groovy allow you to add functionality to existing
+    classes to a project by including a library.
+*/

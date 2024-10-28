@@ -1,0 +1,5 @@
+task runSub{
+    doLast{
+        println "This is SubProject 1"
+    }
+}

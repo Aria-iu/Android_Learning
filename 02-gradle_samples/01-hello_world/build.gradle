@@ -1,0 +1,23 @@
+// gradle -q hello
+// 默认加载当前文件夹下的build.gradle
+// 可以通过 -b 指定要加载的文件
+
+// gradle wrapper 生成 gradlew(.bat) 脚本
+
+// 日志级别：   -q指定 QUIET 及以上信息被打印
+    // ERROR
+    // QUIET
+    // WARNING
+    // LIFECYCLE
+    // INFO
+    // DEBUG
+// -s / -S 错误堆栈开关选项
+task hello{
+    doLast{
+        // 可以使用内置的logger输出日志
+        logger.error('ERROR info');
+        println "Hello World"
+    }
+}
+
+

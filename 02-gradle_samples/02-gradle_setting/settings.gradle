@@ -1,0 +1,6 @@
+// 设置文件大多数作用是为了配置子工程
+// 一个子工程只有在 settings.gradle 文件配置了Gradle才会识别
+rootProject.name = '02-gradle_setting'
+
+include ':example01'
+project(':example01').projectDir = new File(rootDir,'chapter01/example01')

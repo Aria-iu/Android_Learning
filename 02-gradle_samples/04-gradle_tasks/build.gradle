@@ -1,0 +1,99 @@
+def Task ex41CreateTask = task(ex41CreateTask)
+ex41CreateTask.doLast{
+    println "创建方法原型为： Task task(String name) throw ...Exception"
+}
+
+def Task ex42CreateTask = task(ex42CreateTask,group:BasePlugin.BUILD_GROUP)
+ex42CreateTask.doLast{
+    println "创建方法原型为： Task task(String name,Map<String,?> args) throw ...Exception"
+    println "任务分组：${ex42CreateTask.group}"
+}
+
+// 通过闭包的方式进行灵活的配置，闭包的委托对象就是 Task
+task ex43CreateTask {
+    description "演示任务创建"
+    doLast{ 
+        println "创建方法原型为： Task task(String name, Closure configClosure)"
+        println "任务描述： ${description}"
+    }
+}
+// 调用 TaskContainer 对象中的 create 方法
+tasks.create('ex44CreateTask') {
+    description "演示任务创建"
+    doLast{ 
+        println "创建方法原型为： Task task(String name, Closure configClosure)"
+        println "任务描述： ${description}"
+    }
+}
+
+// 我们创建的任务都会作为项目的一个属性，可以直接通过该任务名称访问和操纵该任务
+// 可以通过tasks属性访问TaskContainer，可能是属性名？？
+task ex45CreateTask
+tasks['ex45CreateTask'].doLast{
+    println 'ex45CreateTask.doLast'
+}
+
+// 任务的分组和描述： 任务的分组其实就是对任务的分类，便于我们对任务进行归类整理，这样清晰明了。
+//                 任务的描述是说明这个任务有什么作用。
+def Task myTask = task ex41GroupTask
+myTask.group = BasePlugin.BUILD_GROUP
+myTask.description = '这是一个构建引导任务'
+myTask.doLast {
+    println "group: ${group},descrption: ${description}"
+}
+
+/* 
+        << 操作符可以代替 doLast ，不过已经废弃 ， 不建议使用
+*/
+
+/*
+    我们实际执行一个 Task时候，实际上是在执行他的 actions列表，这个列表保存在Task对象实例 actions 变量之中。
+    类型是 List
+*/
+
+/*
+    任务排序： 通过任务的 shouldRunAfter和 mustRunAfter这两个方法，可以控制一个任务应该或者一定在某个任务之后执行。
+*/
+
+task ex41orderTask
+ex41orderTask.doLast {
+    println 'ex46orderTask'
+}
+task ex42orderTask
+ex42orderTask.doLast {
+    println 'ex47orderTask'
+}
+// ./gradlew ex41orderTask ex42orderTask
+ex41orderTask.mustRunAfter ex42orderTask
+
+/*
+    Task 中有一个enabled属性，用于启用和禁用任务，默认是true，表示启用；
+    设置为Fasle，则禁用该任务，输出提示该任务被跳过
+*/
+task ex41DisabledTask
+ex41DisabledTask.doLast{
+    println 'ex41DisabledTask'
+}
+ex41DisabledTask.enabled = false
+
+/*
+    任务的 onlyif 断言，Task有一个 onlyif方法，接受一个闭包作为参数，如果该闭包返回 true 则该任务执行，否则跳过
+    （书中源码四个Task的闭包完全相同？？？）
+*/
+
+/*
+    任务规则：
+        是NamedDomainObjectCollection的规则，唯一不变的名字，通过名字获取该元素。
+        可能不存在？？ 会抛出异常。
+        名字没找到，会调用 applyRules(String name)应用我们添加的规则，没有规则，返回null，就是异常
+        可以通过 addRule来添加规则
+*/
+tasks.addRule("描述，便于查看"){
+    String taskName -> 
+        def task = task taskName 
+        task.doLast {
+            println "该${taskName}任务不存在，请查证后再执行"
+        }
+}
+
+

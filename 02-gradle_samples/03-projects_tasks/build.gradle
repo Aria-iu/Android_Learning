@@ -1,0 +1,75 @@
+task customTask1 {
+    doFirst {
+        println 'customTask1 : doFirst'
+    }
+    doLast {
+        println 'customTask1 : doLast'
+    }
+}
+
+// task 其实是一个函数，是 Project 对象的一个函数，原型是 create
+// Project 对象为我们定义好了一个 TaskContainer ，就是 tasks
+tasks.create("customTask2") {
+    doFirst {
+        println 'customTask2 : doFirst'
+    }
+    doLast {
+        println 'customTask2 : doLast'
+    }
+}
+
+
+// task 有依赖关系，可以控制哪些任务先执行
+task ex35Hello {
+    println 'Hello'
+}
+
+task ex35Main(dependsOn: ex35Hello){
+    doLast {
+        println 'Main'
+    }
+}
+
+ex35Hello.doLast {
+    // 每一个任务都是 project 的一个属性
+    println project.hasProperty('ex35Hello')
+}
+
+// Project 和 Task 都允许用户添加额外的自定义属性，通过应用所属对应的 ext 属性将即可实现
+
+// 自定义一个Project属性
+ext.age = 18
+// 定义多个属性
+ext {
+    phone = 123
+    address = 'china'
+}
+
+
+
+
+apply plugin: "java"
+sourceSets.all{
+    // 自定义属性
+    ext.resourcesDir = null
+}
+sourceSets {
+    main {
+        resourcesDir = 'main/res'
+    }
+    test {
+        resourcesDir = 'test/res'
+    }
+}
+
+task ex37CustomPorperty {
+    println "age is ${age}"
+    println "phone is ${phone}"
+    println "address is ${address}"
+    sourceSets.each {
+        println "${it.name}的resourcesDir是: ${it.resourcesDir}"
+    }
+}
+
+
+

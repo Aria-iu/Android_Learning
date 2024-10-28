@@ -1,0 +1,9 @@
+task runRoot{
+    doLast{
+        println "This is Root project"
+    }
+}
+
+project(':example01'){
+
+}

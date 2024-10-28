@@ -1,0 +1,51 @@
+/*
+    Android Gradle 插件就是 基于内置的 Java插件实现的。
+    插件的应用是通过 Project.apply()方法完成的。
+    插件分为二进制插件和脚本插件。
+*/
+// 应用二进制插件
+// 二进制插件就是实现了org.gradle.api.Plugin接口的插件，他们可以有plugin id
+// java 是 java插件的 plugin id，对应类型是 org.gradle.api.plugins.JavaPlugin
+// 二进制插件一般都是打包在一个jar里独立发布的
+apply plugin: 'java'
+apply plugin: org.gradle.api.plugins.JavaPlugin
+// 包 org.gradle.api.plugins是默认导入的
+apply plugin: JavaPlugin
+
+// 应用脚本插件
+// 应用脚本插件，其实就是把这个脚本加载进来，后面可以是一个本地文件，也可以是一个网络文件，使用HTTP URL
+apply from: 'version.gradle'
+task ex51PrintlnTask
+ex51PrintlnTask.doLast {
+    println "App 版本是：${versionName},版本号是: ${versionCode}"
+}
+
+// apply 的三种使用方法
+/**
+    void apply(Map<String, ?> options);
+    void apply(Closure closure);
+    void apply(Action<? super ObjectConfigurationAction> action)
+ */
+apply {
+    plugin 'java' // oh!!!
+}
+// action方式
+apply(new Action<ObjectConfigurationAction>(){
+    @Override
+    void execute(ObjectConfigurationAction objectConfigurationAction){
+        objectConfigurationAction.plugin('java')
+    }
+})
+
+// 一个简单的插件
+apply plugin: Ex53CustomPlugin
+// 自定义插件必须要实现Plugin接口，这个接口只有一个 apply 方法，会在插件安装时被调用
+class Ex53CustomPlugin implements Plugin<Project>{
+    void apply(Project project){
+        def custask = project.task('ex53CustomTask')
+        custask.doLast {
+            println '这是一个通过自定义插件引入的Task'
+        }
+    }
+}
+
