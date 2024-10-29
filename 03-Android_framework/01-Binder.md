@@ -67,4 +67,20 @@ transactO的最后一个参数的含义是执行IP C 调用的模式，分为两
 1.客户端如何获得服务端的Binder对象引用
 2.客户端和服务端必须事先约定好两件事情：服务端函数的参数在包裹中的顺序，服务端不同函数的int型标识。
 
+用Binder为了提供一个全局服务，所谓的“全局”，是指系统中的任何应用程序都可以访问
+
+AmS提供了 startService()函数用于启动客户服务，而对客户端来讲，可以使用以下两个函数来和一个服务建立连接
+    public ComponentName startService(Intent intent);   // 该函数用于启动intent指定的服务
+    public boolean bindService(Intent service,ServiceConnection conn,int flags) ;   // 该函数用于绑定一个服务
+
+# 系统服务
+getSystemService(String serviceName)方法获取一个系统服务
+
+getSystemService()函数的实现是在Contextlmpl类中，该函数所返回的Service比较多。这些Service—般都由ServiceManager管理。
+ServiceManager是一个独立进程，其作用如名称所示，管理各种系统服务
+
+ServiceManager本身也是一个Service，Framework提供了一个系统函数，可以获取该Service对应的Binder引用，那就是BinderIntemal.getContextObject()。该静态函数返回ServiceManager后，就可以通过ServiceManager提供的方法获取其他系统Service的Binder引用。
+
+这种设计的好处是系统中仅暴露一个全局Binder引用，那就是ServiceManager，而其他系统服务则可以隐藏起来，从而有助于系统服务的扩展，以及调用系统服务的安全检查。其他系统服务在启动时，首先把自己的Binder对象传递给ServiceManager，即所谓的注册(addService)。
+
 
