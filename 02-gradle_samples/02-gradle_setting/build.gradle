@@ -1,9 +1,7 @@
 task runRoot{
     doLast{
         println "This is Root project"
+        // rootDir 是当前项目的根目录
+        println rootDir
     }
-}
-
-project(':example01'){
-
 }
